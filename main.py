@@ -23,7 +23,28 @@ class gameEngine:
     def __init__(self):
         print("init")
                  #complexity = "difficult"
-
+    
+    #Har ej anropat denna funktion
+    def boardState(self):
+        print(self.board[0]+"(00)----------------------"+self.board[1]+"(01)----------------------"+self.board[2]+"(02)")
+        print("|                           |                           |")
+        print("|       "+self.board[3]+"(03)--------------"+self.board[4]+"(04)--------------"+self.board[5]+"(05)     |")
+        print("|       |                   |                    |      |")
+        print("|       |                   |                    |      |")
+        print("|       |        "+self.board[6]+"(06)-----"+self.board[7]+"(7)-----"+self.board[8]+"(8)         |      |")
+        print("|       |         |                   |          |      |")
+        print("|       |         |                   |          |      |")
+        print(self.board[9]+"(09)---"+self.board[10]+"(10)----"+self.board[11]+"(11)               "+self.board[12]+"(12)----"+self.board[13]+"(13)---"+self.board[14]+"(14)")
+        print("|       |         |                   |          |      |")
+        print("|       |         |                   |          |      |")
+        print("|       |        "+self.board[15]+"(15)-----"+self.board[16]+"(16)-----"+self.board[17]+"(17)       |      |")
+        print("|       |                   |                    |      |")
+        print("|       |                   |                    |      |")
+        print("|       "+self.board[18]+"(18)--------------"+self.board[19]+"(19)--------------"+self.board[20]+"(20)     |")
+        print("|                           |                           |")
+        print("|                           |                           |")
+        print(self.board[21]+"(21)----------------------"+self.board[22]+"(22)----------------------"+self.board[23]+"(23)")
+    
     def countStones():
         if (self.player_one_turn):
             char = 'X'
