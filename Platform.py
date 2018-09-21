@@ -1,17 +1,33 @@
 import Engine
+import AI
 
 
 
 def main():
-    game = Engine.start()
+    game = Engine.GameEngine(True)
 
+    AI_game = AI.AI(3)
 
     # for i in range(0,18):
     #     (game.placeStone(i))
 
     while True:
         game.printBoard()
+
+        if(game.is_game_done != ''):
+            print("game is done")
+            print(game.is_game_done)
+            break
+
         if(game.player_one_turn):
+            if(game.player1_is_ai):
+                print ("ai making move")
+                move = AI_game.getPlaceMove(game)
+
+                # init_plcae, moce = AI.getRotateMove(Game)
+                game.placeStone(move)
+                continue
+
             print("Player ones turn")
             if (game.player_one_phase == 1):
                 print("Phase 1")
@@ -39,7 +55,7 @@ def main():
                 place = input("To which position do you want to move? ")
                 place = int(place)
                 print ()
-                if (game.flyingStone(place, initial_place == 'mill')):
+                if (game.flyingStone(place, initial_place) == 'mill'):
                     place = input("choose a enimy stone you want to remove:")
                     place = int(place)
                     game.removeStone(place)
@@ -74,7 +90,7 @@ def main():
                 initial_place = int(initial_place)
                 place = input("To which position do you want to move? ")
                 place = int(place)
-                if (game.flyingStone(place, initial_place == 'mill')):
+                if (game.flyingStone(place, initial_place) == 'mill'):
                     place = input("choose a enimy stone you want to remove:")
                     place = int(place)
                     game.removeStone(place)

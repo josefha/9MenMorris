@@ -14,6 +14,8 @@
 
 
 class GameEngine:
+    player1_is_ai = False
+    is_game_done = ''
     nr_turns = 0
     timer = 0
     player_one_turn = True
@@ -35,7 +37,8 @@ class GameEngine:
     board = ['_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',]
 
 
-    def __init__(self):
+    def __init__(self, player1_is_ai):
+        self.player1_is_ai = player1_is_ai
         #TODO Get input if it is and AI are used or not
         print("Created Game object")
 
@@ -45,7 +48,7 @@ class GameEngine:
         else:
             return 'O'
 
-    def countStones():
+    def countStones(self):
         char = self.getCurrentPlayerChar()
         counter = 0
         for i in self.board:
@@ -55,7 +58,6 @@ class GameEngine:
 
     def checkIfMill(self,place):
         char = self.getCurrentPlayerChar()
-        isMill = False
         for mill in self.possible_mills:
             if place in mill:
                 counter = 0
@@ -69,13 +71,34 @@ class GameEngine:
 
     def removeStone(self,place):
         print("removing:" + str(place))
+
+        # Playet two turn --- It's turned
+        # remove from player one
         if (self.player_one_turn):
+            print("player one")
             if(self.board[place] == 'X'):
                 self.board[place] = '_'
+
+                if(self.player_one_phase != 1):
+                    if(self.countStones() == 3):
+                        self.player_one_phase = 3
+
+                    if(self.countStones() < 3):
+                        self.is_game_done = 'Player 1 looses'
+
                 return True
         else:
+            print("player two")
             if(self.board[place] == 'O'):
                 self.board[place] = '_'
+
+                if(self.player_two_phase != 1):
+                    if(self.countStones() == 3):
+                        self.player_two_phase = 3
+
+                    if(self.countStones() < 3):
+                        self.is_game_done = 'Player 2 looses'
+
                 return True
 
         return False
@@ -85,17 +108,11 @@ class GameEngine:
         if ((place > 23 and place < 0) or self.board[place] != '_' ):
                  return ("not valid move")
 
-        if (self.player_one_turn):
+        if(self.player_one_turn):
             if self.stones_left_player_one > 0:
                 print ("player1")
                 self.board[place] = "X"
-
-                if(self.checkIfMill(place)):
-                    return('mill')
-
-                self.player_one_turn = False
                 self.stones_left_player_one -= 1
-
                 if self.stones_left_player_one == 0:
                     self.player_one_phase = 2
             else:
@@ -104,17 +121,19 @@ class GameEngine:
             if self.stones_left_player_two > 0:
                 print ("player2")
                 self.board[place] = "O"
-
-                if(self.checkIfMill(place)):
-                    return('mill')
-
-                self.player_one_turn = True
                 self.stones_left_player_two -= 1
-
                 if self.stones_left_player_two == 0:
                     self.player_two_phase = 2
             else:
                 return ("no stones left")
+
+        if(self.checkIfMill(place)):
+            self.player_one_turn = not self.player_one_turn
+            return('mill')
+        else:
+            self.player_one_turn = not self.player_one_turn
+            return('')
+
 
 
     #Step 2 - ROTATE
@@ -129,25 +148,17 @@ class GameEngine:
             print ("player1")
             self.board[place] = "X"
             self.board[initial_place] = "_"
-            if(self.checkIfMill(place)):
-                return('mill')
-
-            self.player_one_turn = False
-            print(self.board)
 
         else:
             print ("player2")
             self.board[place] = "O"
             self.board[initial_place] = "_"
-            if(self.checkIfMill(place)):
-                return('mill')
-
-            self.player_one_turn = True
-            print(self.board)
 
         if(self.checkIfMill(place)):
+            self.player_one_turn = not self.player_one_turn
             return('mill')
         else:
+            self.player_one_turn = not self.player_one_turn
             return('')
 
     #Step 3 - Place
@@ -159,19 +170,19 @@ class GameEngine:
             print ("player1")
             self.board[place] = "X"
             self.board[initial_place] = "_"
-            if(self.checkIfMill(place)):
-                return('mill')
-            self.player_one_turn = False
-            print(self.board)
 
         else:
             print ("player2")
             self.board[place] = "O"
             self.board[initial_place] = "_"
-            if(self.checkIfMill(place)):
-                return('mill')
-            self.player_one_turn = True
-            print(self.board)
+
+        if(self.checkIfMill(place)):
+            self.player_one_turn = not self.player_one_turn
+            return('mill')
+        else:
+            self.player_one_turn = not self.player_one_turn
+            return('')
+
 
 
     def printBoard(self):
@@ -193,6 +204,3 @@ class GameEngine:
         print("|                           |                           |")
         print("|                           |                           |")
         print(self.board[21]+"(21)----------------------"+self.board[22]+"(22)----------------------"+self.board[23]+"(23)")
-
-def start():
-    return GameEngine()
