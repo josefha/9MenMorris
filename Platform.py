@@ -23,9 +23,10 @@ def main():
             if(game.player1_is_ai):
                 print ("ai making move")
                 move = AI_game.getPlaceMove(game)
-
+                print("AI placed a stone on " + str(move) + " <---- ")
                 # init_plcae, moce = AI.getRotateMove(Game)
                 game.placeStone(move)
+
                 continue
 
             print("Player ones turn")
@@ -65,7 +66,7 @@ def main():
             print("Player two turn")
             if (game.player_two_phase == 1):
                 print("Phase 1")
-                place = input("Number?, if exit write x: ")
+                place = input("place stone on: ")
                 place = int(place)
                 if (game.placeStone(place) == 'mill'):
                     place = input("choose a enimy stone you want to remove:")
