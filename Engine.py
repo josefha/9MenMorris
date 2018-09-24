@@ -1,4 +1,8 @@
 # GameEngine Interface
+
+# The gameEngine class holds the game state
+# Call methods on an GameEngine object to change the game state
+
 # methods
 #  .placeStone(place)
 #  .rotateStone(place, initial_place)
@@ -9,12 +13,12 @@
 #  .player_one_turn   - True if it is player ones turn
 #  .stones_left_player_one
 #  .stones_left_player_two
-#  .player_one_phase  - placing stone 1, rotating 2, flying 3
-#  .player_two_phase  - placing stone 1, rotating 2, flying 3
-
+#  .player_one_phase  - placing stone = 1, rotating = 2, flying = 3
+#  .player_two_phase  - placing stone = 1, rotating = 2, flying = 3
 
 class GameEngine:
     player1_is_ai = False
+    player2_is_ai = False
     is_game_done = ''
     nr_turns = 0
     timer = 0
@@ -37,9 +41,10 @@ class GameEngine:
     board = ['_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_','_',]
 
 
-    def __init__(self, player1_is_ai):
+    def __init__(self, player1_is_ai, player2_is_ai):
         self.player1_is_ai = player1_is_ai
-        #TODO Get input if it is and AI are used or not
+        self.player2_is_ai = player2_is_ai
+
         print("Created Game object")
 
     def getCurrentPlayerChar(self):

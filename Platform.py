@@ -2,11 +2,14 @@ import Engine
 import AI
 
 
+# The frontend for the game
+# All input from the user is done here
+# Some logic is fone here to know what to ask for
+
 
 def main():
-    game = Engine.GameEngine(True)
-
-    AI_game = AI.AI(3)
+    game = Engine.GameEngine(True,False)
+    bot = AI.AI(3)
 
     # for i in range(0,18):
     #     (game.placeStone(i))
@@ -20,13 +23,18 @@ def main():
             break
 
         if(game.player_one_turn):
+            #TODO Create the flow of AI phases
+            #Now only implemented for the first phase
             if(game.player1_is_ai):
-                print ("ai making move")
-                move = AI_game.getPlaceMove(game)
+                move = bot.getPlaceMove(game)
                 print("AI placed a stone on " + str(move) + " <---- ")
-                # init_plcae, moce = AI.getRotateMove(Game)
-                game.placeStone(move)
 
+                if (game.placeStone(move) == 'mill'):
+                    move = getRemoveStone(game)
+                    print("AI Removed enemy stone at " + move)
+                    game.removeStone(move)
+
+                #Skip input from a user, Ai have already made a move
                 continue
 
             print("Player ones turn")
