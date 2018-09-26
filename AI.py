@@ -107,6 +107,7 @@ class AI:
         enemyStones = self.getStonesPos(game)
 
         # If enemy player can get a mill next turn remove one of those two stones
+        # TODO Check if working
         for possible_mill in game.possible_mills:
             stones = 0
             empty = []
@@ -139,19 +140,30 @@ class AI:
     def getRotateMove(self, game):
         char = game.getCurrentPlayerChar()
         my_stones = self.getStonesPos(game)
+        empty_positions = self.getEmptyPositions(game)
 
-        init_place = 1
-        move = 2
 
-        return move,init_place
+        print("made a random rotate move")
+        # OBS THIS IS I FLYING MOVE
+        # TODO check that they are adjecent
+        s_i = random.randrange(len(my_stones))
+        e_i = random.randrange(len(empty_positions))
+        init_place = my_stones[s_i]
+        move = empty_positions[e_i]
+
+        return init_place, move
 
     # TODO
     # PHASE 3 --- Returns a move to fly a stone in third step
     def getFlyingMove(self, game):
         char = game.getCurrentPlayerChar()
         my_stones = self.getStonesPos(game)
+        empty_positions = self.getEmptyPositions(game)
 
-        init_place = 1
-        move = 2
+        print("made a random rotate move")
+        s_i = random.randrange(len(my_stones))
+        e_i = random.randrange(len(empty_positions))
+        init_place = my_stones[s_i]
+        move = empty_positions[e_i]
 
-        return move,init_place
+        return init_place, move
