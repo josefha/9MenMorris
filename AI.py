@@ -117,6 +117,7 @@ class AI:
 
             if(stones == 2 and len(empty) == 1):
                 # Remove middle one or a random ?
+                print("removing towards mill")
                 return enemy_places[1]
 
         # TODO
@@ -126,9 +127,9 @@ class AI:
         # elif remove a middle stone ? []
 
         # else remove a random stone
+        print("removing random")
         index = random.randrange(len(enemyStones))
-        #return enemyStones[index]
-        return
+        return enemyStones[index]
 
     # TODO
     # PHASE 2 --- Returns a move to rotate a stone in second step
