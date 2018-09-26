@@ -24,50 +24,61 @@ def main():
 
         if(game.player_one_turn):
             #TODO Create the flow of AI phases
-            #Now only implemented for the first phase
-            if(game.player1_is_ai):
-                move = bot.getPlaceMove(game)
-                print("AI placed a stone on " + str(move) + " <---- ")
-
-                if (game.placeStone(move) == 'mill'):
-                    move = bot.getRemoveStone(game)
-                    print("AI Removed enemy stone at " + str(move))
-                    game.removeStone(move)
-
-                #Skip input from a user, Ai have already made a move
-                continue
 
             print("Player ones turn")
             if (game.player_one_phase == 1):
                 print("Phase 1")
-                place = input("Place stone on: ")
-                place = int(place)
-                if (game.placeStone(place) == 'mill'):
-                    place = input("choose a enimy stone you want to remove:")
+                if(game.player1_is_ai):
+                    move = bot.getPlaceMove(game)
+                    print("AI placed a stone on " + str(move) + " <---- ")
+                    if (game.placeStone(move) == 'mill'):
+                        move = bot.getRemoveStone(game)
+                        print("AI Removed enemy stone at " + str(move))
+                        game.removeStone(move)
+                else:
+                    place = input("Place stone on: ")
                     place = int(place)
-                    game.removeStone(place)
+                    if (game.placeStone(place) == 'mill'):
+                        place = input("choose a enimy stone you want to remove:")
+                        place = int(place)
+                        game.removeStone(place)
 
             elif (game.player_one_phase == 2):
                 print("Phase 2")
-                initial_place = input("In which position is the stone you want to move? ")
-                initial_place = int(initial_place)
-                place = input("To which position do you want to move? ")
-                place = int(place)
-                if (game.rotateStone(place, initial_place) == 'mill'):
-                    place = input("choose a enimy stone you want to remove:")
+                if(game.player1_is_ai):
+                    initial_place, stone = bot.getRotateMove(game)
+                    print("AI moved stone from " + str(stone) + " -> " + str(move))
+                    if (game.rotateStone(stone, initial_place) == 'mill'):
+                        move = bot.getRemoveStone(game)
+                        print("AI Removed enemy stone at " + str(move))
+                        game.removeStone(move)
+                else:
+                    initial_place = input("In which position is the stone you want to move? ")
+                    initial_place = int(initial_place)
+                    place = input("To which position do you want to move? ")
                     place = int(place)
-                    game.removeStone(place)
+                    if (game.rotateStone(place, initial_place) == 'mill'):
+                        place = input("choose a enimy stone you want to remove:")
+                        place = int(place)
+                        game.removeStone(place)
             else:
                 print("Phase 3")
-                initial_place = input("In which position is the stone you want to move? ")
-                initial_place = int(initial_place)
-                place = input("To which position do you want to move? ")
-                place = int(place)
-                print ()
-                if (game.flyingStone(place, initial_place) == 'mill'):
-                    place = input("choose a enimy stone you want to remove:")
+                if(game.player1_is_ai):
+                    initial_place, place = bot.getFlyingMove(game)
+                    print("AI moved stone from " + str(stone) + " -> " + str(move))
+                    if (game.flyingStone(place, initial_place) == 'mill'):
+                        move = bot.getRemoveStone(game)
+                        print("AI Removed enemy stone at " + str(move))
+                        game.removeStone(move)
+                else:
+                    initial_place = input("In which position is the stone you want to move? ")
+                    initial_place = int(initial_place)
+                    place = input("To which position do you want to move? ")
                     place = int(place)
-                    game.removeStone(place)
+                    if (game.flyingStone(place, initial_place) == 'mill'):
+                        place = input("choose a enimy stone you want to remove:")
+                        place = int(place)
+                        game.removeStone(place)
 
 
         else:
@@ -103,6 +114,5 @@ def main():
                     place = input("choose a enimy stone you want to remove:")
                     place = int(place)
                     game.removeStone(place)
-
 
 main()

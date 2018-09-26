@@ -76,10 +76,13 @@ class AI:
                         # TODO fix, check if your own stones...
                         if(place in possible_mill and adj_place in possible_mill):
                             print(possible_mill)
+                            empty_places_count = 0
                             for pos in possible_mill:
                                 if(game.board[pos] == '_'):
-                                    print("AI placed a second stone towards a mill")
-                                    return adj_place
+                                    empty_places_count = empty_places_count + 1
+                            if(empty_places_count == 2):
+                                print("AI placed a second stone towards a mill")
+                                return adj_place
 
 
 
@@ -127,7 +130,7 @@ class AI:
         # elif remove a middle stone ? []
 
         # else remove a random stone
-        print("removing random")
+        print("removing random stone")
         index = random.randrange(len(enemyStones))
         return enemyStones[index]
 
@@ -137,10 +140,10 @@ class AI:
         char = game.getCurrentPlayerChar()
         my_stones = self.getStonesPos(game)
 
-        stone = 1
+        init_place = 1
         move = 2
 
-        return stone, move
+        return move,init_place
 
     # TODO
     # PHASE 3 --- Returns a move to fly a stone in third step
@@ -148,7 +151,7 @@ class AI:
         char = game.getCurrentPlayerChar()
         my_stones = self.getStonesPos(game)
 
-        stone = 1
+        init_place = 1
         move = 2
 
-        return stone, move
+        return move,init_place
