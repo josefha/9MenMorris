@@ -30,8 +30,8 @@ def main():
                 print("AI placed a stone on " + str(move) + " <---- ")
 
                 if (game.placeStone(move) == 'mill'):
-                    move = getRemoveStone(game)
-                    print("AI Removed enemy stone at " + move)
+                    move = bot.getRemoveStone(game)
+                    print("AI Removed enemy stone at " + str(move))
                     game.removeStone(move)
 
                 #Skip input from a user, Ai have already made a move

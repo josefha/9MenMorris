@@ -69,15 +69,17 @@ class AI:
         # place a stone next to your own stone towords a mill
         # if last place in mill is empty
         for place in my_stones:
+            print(place)
             for adj_place in game.adjecent_list[place]:
-                for possible_mill in game.possible_mills:
-                    # TODO fix, check if your own stones... 
-                    if(place in possible_mill and adj_place in possible_mill):
-                        print(possible_mill)
-                        for pos in possible_mill:
-                            if(game.board[pos] == '_'):
-                                print("AI placed a second stone towards a mill")
-                                return adj_place
+                if(game.board[adj_place] == '_'):
+                    for possible_mill in game.possible_mills:
+                        # TODO fix, check if your own stones...
+                        if(place in possible_mill and adj_place in possible_mill):
+                            print(possible_mill)
+                            for pos in possible_mill:
+                                if(game.board[pos] == '_'):
+                                    print("AI placed a second stone towards a mill")
+                                    return adj_place
 
 
 
@@ -88,18 +90,18 @@ class AI:
 
 
         print("AI made a random move, no good move was found")
-        empty_places = getEmptyPositions(game)
+        empty_places = self.getEmptyPositions(game)
         index = random.randrange(len(empty_places))
         return empty_places[index]
 
 
-    def getRemoveStone(self, Game):
+    def getRemoveStone(self, game):
         # NOTE that we have changed players turn before this turn
 
         # --> getCurrentPlayerChar() returns the opponents stones
         # insted of the players that actually are removing stones
-        char = getCurrentPlayerChar(self, game)
-        enemyStones = getStonesPos(self, game)
+        char = game.getCurrentPlayerChar()
+        enemyStones = self.getStonesPos(game)
 
         # If enemy player can get a mill next turn remove one of those two stones
         for possible_mill in game.possible_mills:
