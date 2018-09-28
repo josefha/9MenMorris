@@ -59,6 +59,8 @@ class GameEngine:
         for i in self.board:
             if(i == char):
                 counter += 1
+
+        print("PRINT CURRENT STONES FOR"+char+":" + str(counter))
         return counter
 
     def checkIfMill(self,place):
@@ -80,12 +82,12 @@ class GameEngine:
         # Playet two turn --- It's turned
         # remove from player one
         if (self.player_one_turn):
-            print("player one")
             if(self.board[place] == 'X'):
                 self.board[place] = '_'
 
                 if(self.player_one_phase != 1):
                     if(self.countStones() == 3):
+                        print("Chaging to phase 3")
                         self.player_one_phase = 3
 
                     if(self.countStones() < 3):
@@ -93,7 +95,7 @@ class GameEngine:
 
                 return True
         else:
-            print("player two")
+
             if(self.board[place] == 'O'):
                 self.board[place] = '_'
 
@@ -115,7 +117,7 @@ class GameEngine:
 
         if(self.player_one_turn):
             if self.stones_left_player_one > 0:
-                print ("player1")
+
                 self.board[place] = "X"
                 self.stones_left_player_one -= 1
                 if self.stones_left_player_one == 0:
@@ -124,7 +126,7 @@ class GameEngine:
                 return ("Can't place stone, no stones left")
         else:
             if self.stones_left_player_two > 0:
-                print ("player2")
+
                 self.board[place] = "O"
                 self.stones_left_player_two -= 1
                 if self.stones_left_player_two == 0:
@@ -150,12 +152,12 @@ class GameEngine:
             return ("Not a adjecent node")
 
         if (self.player_one_turn):
-            print ("player1")
+
             self.board[place] = "X"
             self.board[initial_place] = "_"
 
         else:
-            print ("player2")
+
             self.board[place] = "O"
             self.board[initial_place] = "_"
 

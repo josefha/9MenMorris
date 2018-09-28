@@ -41,12 +41,6 @@ class AI:
         char = game.getCurrentPlayerChar()
         my_stones = self.getStonesPos(game)
 
-        # Place in middle positions if empty
-        for place in [13,4,10,19]:
-            if (game.board[place] == '_'):
-                print("placed on a middle move")
-                return place
-
         # not on easy
         # place a stone to get mill if possible
         for possible_mill in game.possible_mills:
@@ -91,6 +85,11 @@ class AI:
         # TODO
         # place on next best positions after [13,4,10,16]
 
+        # Place in middle positions if empty
+        for place in [13,4,10,19]:
+            if (game.board[place] == '_'):
+                print("placed on a middle move")
+                return place
 
         print("AI made a random move, no good move was found")
         empty_places = self.getEmptyPositions(game)
@@ -139,17 +138,36 @@ class AI:
     # PHASE 2 --- Returns a move to rotate a stone in second step
     def getRotateMove(self, game):
         char = game.getCurrentPlayerChar()
+        print("char:"+char)
         my_stones = self.getStonesPos(game)
-        empty_positions = self.getEmptyPositions(game)
+        print("my_stones")
+        print(my_stones)
+        #empty_positions = self.getEmptyPositions(game)
 
+        possible_stones = []
+        possible_postions = []
+        for stone in my_stones:
+            adj = []
+            for place in game.adjecent_list[stone]:
+                if (game.board[place] == '_'):
+                    adj.append(place)
+            if(len(adj) > 0):
+                possible_stones.append(stone)
+                possible_postions.append(adj)
 
         print("made a random rotate move")
-        # OBS THIS IS I FLYING MOVE
+        print (possible_stones)
+        print (possible_postions)
+
+
+        p_i = random.randrange(len(possible_stones))
         # TODO check that they are adjecent
-        s_i = random.randrange(len(my_stones))
-        e_i = random.randrange(len(empty_positions))
-        init_place = my_stones[s_i]
-        move = empty_positions[e_i]
+
+        s_i = random.randrange(len(possible_postions[p_i]))
+
+        #e_i = random.randrange(len(empty_positions))
+        init_place = possible_stones[p_i]
+        move = possible_postions[p_i][s_i]
 
         return init_place, move
 
@@ -160,7 +178,7 @@ class AI:
         my_stones = self.getStonesPos(game)
         empty_positions = self.getEmptyPositions(game)
 
-        print("made a random rotate move")
+        print("made a random flying move")
         s_i = random.randrange(len(my_stones))
         e_i = random.randrange(len(empty_positions))
         init_place = my_stones[s_i]
