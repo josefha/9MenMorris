@@ -56,6 +56,11 @@ class BoardTransalator:
               23:77
         }
 
+#TODO
+def oldBoard(oldBoard):
+
+    return []
+
 def getXyPos(oldPos):
     return self.oldToNew[oldPos]
 
