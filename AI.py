@@ -38,6 +38,9 @@ class AI:
 
     # PHASE 1 --- Returns a move to place a stone in first step
     def getPlaceMove(self, game):
+
+        
+
         char = game.getCurrentPlayerChar()
         my_stones = self.getStonesPos(game)
 
