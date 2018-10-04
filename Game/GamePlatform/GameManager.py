@@ -5,6 +5,7 @@ from GamePlatform.StdinController import StdinController
 from TournamentManager.MatchResult import MatchResult
 
 from GameEngine.ComputerController import ComputerController
+from time import sleep
 
 TURNS_FOR_DRAW = 400
 DEFAULT_STONES = 9
@@ -42,6 +43,7 @@ class GameManager:
         winner = None
 
         while not is_game_over:
+            sleep(0.1)
             if self.step_count > TURNS_FOR_DRAW:
                 winner = None
                 return winner
