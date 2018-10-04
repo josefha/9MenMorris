@@ -4,6 +4,8 @@ from GamePlatform.Player import Player
 from GamePlatform.StdinController import StdinController
 from TournamentManager.MatchResult import MatchResult
 
+from GameEngine.ComputerController import ComputerController
+
 TURNS_FOR_DRAW = 400
 DEFAULT_STONES = 9
 
@@ -18,7 +20,10 @@ class GameManager:
         stone_type = "black"
         for tournament_player in tournament_players:
             player = Player(stone_type, tournament_player, DEFAULT_STONES)
-            player.set_controller(StdinController(player))
+            if(tournament_player.cpu == True):
+                player.set_controller(ComputerController(player, complexity = tournament_player.cpu_level))
+            else:
+                player.set_controller(StdinController(player))
             self.players.append(player)
             stone_type = "white"
 

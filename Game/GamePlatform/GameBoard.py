@@ -40,6 +40,7 @@ class GameBoard:
 
                 columnt_count += 1
             row_count += 1
+        print(self.board)
 
 
 

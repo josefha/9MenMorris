@@ -1,68 +1,84 @@
-import ../GamePlatform/GameBoard
 
-class BoardTransalator:
+class BoardTranslator:
     def __init__(self):
         self.newToOld = {
               11: 0,
-              14: 1,
-              17: 2,
+              41: 1,
+              71: 2,
               22: 3,
-              24: 4,
-              26: 5,
+              42: 4,
+              62: 5,
               33: 6,
-              34: 7,
-              35: 8,
-              41: 9,
-              42: 10,
-              43: 11,
-              45: 12,
-              46: 13,
-              47: 14,
-              53: 15,
-              54: 16,
+              43: 7,
+              53: 8,
+              14: 9,
+              24: 10,
+              34: 11,
+              54: 12,
+              64: 13,
+              74: 14,
+              35: 15,
+              45: 16,
               55: 17,
-              62: 18,
-              64: 19,
+              26: 18,
+              46: 19,
               66: 20,
-              71: 21,
-              74: 22,
+              17: 21,
+              47: 22,
               77: 23
             }
 
         self.oldToNew = {
               0:11,
-              1:14,
-              2:17,
+              1:41,
+              2:71,
               3:22,
-              4:24,
-              5:26,
+              4:42,
+              5:62,
               6:33,
-              7:34,
-              8:35,
-              9:41,
-              10:42,
-              11:43,
-              12:45,
-              13:46,
-              14:47,
-              15:53,
-              16:54,
+              7:43,
+              8:53,
+              9:14,
+              10:24,
+              11:34,
+              12:54,
+              13:64,
+              14:74,
+              15:35,
+              16:45,
               17:55,
-              18:62,
-              19:64,
+              18:26,
+              19:46,
               20:66,
-              21:71,
-              22:74,
+              21:17,
+              22:47,
               23:77
         }
 
-#TODO
-def oldBoard(oldBoard):
+    def getOldBoard(self, newBoard):
+        oldBoard = []
 
-    return []
+        for k,e in newBoard.items():
+            if(e.owner == None):
+                char = '_'
+            elif(e.owner.stone_type == 'black'):
+                char = 'X'
+            elif(e.owner.stone_type == 'white'):
+                char = 'O'
 
-def getXyPos(oldPos):
-    return self.oldToNew[oldPos]
+            oldBoard.append(char)
 
-def getOldPos(newPos):
-    return self.newToOld[newPos]
+        return oldBoard
+
+    def getNewPos(self, oldPos):
+        return str(self.oldToNew[oldPos])
+
+    def getOldPos(self, newPos):
+        newPos = int(newPos)
+        return self.newToOld[newPos]
+
+    def getCurrentPlayerChar(self, player):
+        if(player.stone_type == 'black'):
+            return 'X'
+        else:
+            return 'O'
