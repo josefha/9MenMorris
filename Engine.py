@@ -52,6 +52,11 @@ class GameEngine:
             return 'X'
         else:
             return 'O'
+    def getOpponentPlayerChar(self):
+        if (self.player_one_turn):
+            return 'O'
+        else:
+            return 'X'
 
     def countStones(self):
         char = self.getCurrentPlayerChar()
