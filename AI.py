@@ -36,11 +36,24 @@ class AI:
                 positions.append(i)
         return positions
 
+    def getStonesOpponentPos(self, game):
+        char = game.getOpponentPlayerChar()
+        positions = []
+        for i, place in enumerate(game.board):
+            if place == char:
+                positions.append(i)
+        return positions
+
+
     # PHASE 1 --- Returns a move to place a stone in first step
     def getPlaceMove(self, game):
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> de7068ba316c751cba490e933deb09f6600b54e4
         char = game.getCurrentPlayerChar()
+        opponents_char = game.getOpponentPlayerChar()
         my_stones = self.getStonesPos(game)
 
         # not on easy
@@ -59,9 +72,25 @@ class AI:
                 print(empty)
                 return empty[0]
 
-        # TODO
-        # place a stone to stop opponents mill
 
+        # place a stone to stop opponents mill
+        opponent_stones = self.getStonesOpponentPos(game)
+
+        # not on easy
+        # place a stone to get mill if possible
+        for possible_mill in game.possible_mills:
+            stones = 0
+            empty = []
+            for place in possible_mill:
+                if(game.board[place] == opponents_char):
+                    stones = stones + 1
+                elif(game.board[place] == '_'):
+                    empty.append(place)
+
+            if(stones == 2 and len(empty) == 1):
+                print(possible_mill)
+                print(empty)
+                return empty[0]
         # place a stone next to your own stone towords a mill
         # if last place in mill is empty
         for place in my_stones:
@@ -84,14 +113,15 @@ class AI:
 
 
 
-        # TODO
-        # place on next best positions after [13,4,10,16]
-
         # Place in middle positions if empty
+        random_list = []
         for place in [13,4,10,19]:
             if (game.board[place] == '_'):
-                print("placed on a middle move")
-                return place
+                random_list.append(place)
+
+        random_number = random.choice(random_list)
+        return (random_number)
+
 
         print("AI made a random move, no good move was found")
         empty_places = self.getEmptyPositions(game)
@@ -107,8 +137,8 @@ class AI:
         char = game.getCurrentPlayerChar()
         enemyStones = self.getStonesPos(game)
 
-        # If enemy player can get a mill next turn remove one of those two stones
-        # TODO Check if working
+        #If enemy player can get a mill next turn remove one of those two stones
+
         for possible_mill in game.possible_mills:
             stones = 0
             empty = []
@@ -131,16 +161,79 @@ class AI:
         # TODO
         # elif remove a middle stone ? []
 
+        print(char)
         # else remove a random stone
-        print("removing random stone")
-        index = random.randrange(len(enemyStones))
-        return enemyStones[index]
+        for possible_mill in game.possible_mills:
+            stones = 0
+            empty = []
+            enemy_places = []
+            for place in possible_mill:
+                if(game.board[place] == char):
+                    stones = stones + 1
+                    enemy_places.append(place)
+                    print(enemy_places)
+                    print("enemy places in loooop")
+                elif(game.board[place] == '_'):
+                    empty.append(place)
+
+            if(stones == 3 and len(empty) == 0):
+                print(enemyStones)
+                print("enemy stones")
+                enemyStones.remove(enemy_places[0])
+                enemyStones.remove(enemy_places[1])
+                enemyStones.remove(enemy_places[2])
+                print(enemyStones)
+
+        enemyStones = self.getStonesPos(game)
+        if len(enemyStones) == 0:
+            index = random.randrange(len(enemyStones))
+            return enemyStones[index]
+
+
+
+
+
 
     # TODO
     # PHASE 2 --- Returns a move to rotate a stone in second step
+
     def getRotateMove(self, game):
+
         char = game.getCurrentPlayerChar()
-        print("char:"+char)
+        # print (char+":char")
+        # #Rotate to get mill
+        # for possible_mill in game.possible_mills:
+        #     stones = 0
+        #     empty = []
+        #     enemy_places = []
+        #     for place in possible_mill:
+        #         if(game.board[place] == char):
+        #             stones += 1
+        #             enemy_places.append(place)
+        #             print (enemy_places)
+        #         elif(game.board[place] == '_'):
+        #             empty.append(place)
+        #             print(empty[0])
+        #
+        #     if(stones == 2 and len(empty) == 1):
+        #         adje_list = []
+        #         print (empty[0])
+        #         # for list in game.adjecent_list:
+        #         #     for place in list:
+        #         #         if empty[0] == place:
+        #
+        #         # Remove middle one or a random ?
+        #         #print("removing towards mill")
+        #         #return enemy_places[1]
+        #     # init_place = possible_stones[p_i]
+        #     # move = possible_postions[p_i][s_i]
+        #
+        #     return init_place, move
+
+
+
+        #char = game.getCurrentPlayerChar()
+        #print("char:"+char)
         my_stones = self.getStonesPos(game)
         print("my_stones")
         print(my_stones)
