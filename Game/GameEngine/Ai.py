@@ -1,10 +1,10 @@
 import random
 
 #  Methods that can be used:
-# .getPlaceMove(game)           --> Return a position (int)
-# .getRotateMove(game)          --> Return two postions (int, int)
-# .getFlyingMove(game)          --> Return two postions (int, int)
-# .getRemoveStone(game)         --> Return a position (int)
+# .getPlaceMove(board, player_char)           --> Return a position (int)
+# .getRotateMove(board, player_char)          --> Return two postions (int, int)
+# .getFlyingMove(board, player_char)          --> Return two postions (int, int)
+# .getRemoveStone(board, player_char)         --> Return a position (int)
 
 class Ai:
     # TODO choose whish rules that are going be for which complexity
@@ -37,12 +37,30 @@ class Ai:
                 positions.append(i)
         return positions
 
+    def getStonesOpponentPos(self, board, char):
+        if(char == 'X'):
+            char = 'O'
+        else:
+            char = 'X'
+
+        positions = []
+        for i, place in enumerate(board):
+            if place == char:
+                positions.append(i)
+        return positions
+
+    def getOpponentPlayerChar(self, char):
+        if(char == 'X'):
+            return 'O'
+        else:
+            return 'X'
+
+
     # PHASE 1 --- Returns a move to place a stone in first step
     def getPlaceMove(self, board, player_char):
         char = player_char
         my_stones = self.getStonesPos(board, char)
 
-        # not on easy
         # place a stone to get mill if possible
         for possible_mill in self.possible_mills:
             stones = 0
@@ -54,12 +72,23 @@ class Ai:
                     empty.append(place)
 
             if(stones == 2 and len(empty) == 1):
+                return empty[0]
+
+        # place a stone to stop opponents mill
+        opponents_char = self.getOpponentPlayerChar(char)
+        for possible_mill in self.possible_mills:
+            stones = 0
+            empty = []
+            for place in possible_mill:
+                if(board[place] == opponents_char):
+                    stones = stones + 1
+                elif(board[place] == '_'):
+                    empty.append(place)
+
+            if(stones == 2 and len(empty) == 1):
                 print(possible_mill)
                 print(empty)
                 return empty[0]
-
-        # TODO
-        # place a stone to stop opponents mill
 
         # place a stone next to your own stone towords a mill
         # if last place in mill is empty
@@ -79,14 +108,16 @@ class Ai:
                                 print("AI placed a second stone towards a mill")
                                 return adj_place
 
-        # TODO
-        # place on next best positions after [13,4,10,16]
-
         # Place in middle positions if empty
+        random_list = []
         for place in [13,4,10,19]:
             if (board[place] == '_'):
-                print("placed on a middle move")
-                return place
+                random_list.append(place)
+
+
+        if(len(random_list) > 0):
+            random_number = random.choice(random_list)
+            return (random_number)
 
         print("AI made a random move, no good move was found")
         empty_places = self.getEmptyPositions(board)
@@ -123,18 +154,31 @@ class Ai:
                 print("removing towards mill")
                 return enemy_places[1]
 
-        # TODO
-        # elif remove a stone that is two in a row
+        for possible_mill in self.possible_mills:
+            stones = 0
+            empty = []
+            enemy_places = []
+            for place in possible_mill:
+                if(board[place] == char):
+                    stones = stones + 1
+                    enemy_places.append(place)
+                elif(board[place] == '_'):
+                    empty.append(place)
 
-        # TODO
-        # elif remove a middle stone ? []
+            if(stones == 3 and len(empty) == 0):
+                enemyStones.remove(enemy_places[0])
+                enemyStones.remove(enemy_places[1])
+                enemyStones.remove(enemy_places[2])
 
-        # else remove a random stone
-        print("removing random stone")
-        index = random.randrange(len(enemyStones))
-        return enemyStones[index]
-    #
-    # # TODO
+
+        if len(enemyStones) == 0:
+            enemyStones = self.getStonesPos(board, char)
+            index = random.randrange(len(enemyStones))
+            return enemyStones[index]
+        else:
+            index = random.randrange(len(enemyStones))
+            return enemyStones[index]
+
     # PHASE 2 --- Returns a move to rotate a stone in second step
     def getRotateMove(self, board, player_char):
         char = player_char
