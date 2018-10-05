@@ -66,10 +66,7 @@ class StdinController(Controller):
                 slot_owner)
 
             if slot_owner is None or slot_owner is self.player:
-                print(
-                    "\033[31mYou have to select one of your opponents stones\u001b[0m"
-                )
-
+                print("\033[31mYou have to select one of your opponents stones\u001b[0m")
             elif len(slots_outside_mills) > 0 and selected_slot not in slots_outside_mills:
                 print("\033[31mYou have to remove stones not in a mill "
                       "before you remove stones inside a mill\u001b[0m")
@@ -109,7 +106,7 @@ class StdinController(Controller):
 
             if not is_owner:
                 print("This stone is not yours. Select another.")
-            elif not can_move:
+            elif not can_move and not can_fly:
                 print("This stone can't move anywhere, pick another one")
             else:
                 is_valid_input = True
@@ -117,6 +114,16 @@ class StdinController(Controller):
         new_position_slot = None
         while new_position_slot is None:
             # Where we want to go
+            if can_fly:
+                chosen_slot = self.get_input_slot(
+                    board, "Your stones can now fly: where do you want to go?")
+                if chosen_slot.owner is None:
+                    new_position_slot = chosen_slot
+                    break
+                else:
+                    print("\033[31mSlot is already occupied, try again\u001b[0m")
+                    continue
+
             new_position = input("Choose direction to move: ")
 
             while new_position not in ("up", "right", "left", "down"):
@@ -131,14 +138,6 @@ class StdinController(Controller):
                 direction = "bottom"
 
             new_position_slot = getattr(current_position_slot, direction)
-            fly_slot = getattr(new_position_slot, direction)
-
-            if can_fly and fly_slot is not None and fly_slot.owner is None:
-                answer = input("Do you want to move two steps? (yes/no) ")
-                while answer not in ("yes", "no"):
-                    answer = input("Do you want to move two steps? (yes/no) ")
-                if answer == "yes":
-                    new_position_slot = fly_slot
 
             if new_position_slot is None:
                 print("There is no board slot in this direction. Try again!")
