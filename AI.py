@@ -48,10 +48,7 @@ class AI:
     # PHASE 1 --- Returns a move to place a stone in first step
     def getPlaceMove(self, game):
 
-<<<<<<< HEAD
 
-=======
->>>>>>> de7068ba316c751cba490e933deb09f6600b54e4
         char = game.getCurrentPlayerChar()
         opponents_char = game.getOpponentPlayerChar()
         my_stones = self.getStonesPos(game)
@@ -202,6 +199,8 @@ class AI:
         char = game.getCurrentPlayerChar()
         # print (char+":char")
         # #Rotate to get mill
+
+        # get plaxe
         # for possible_mill in game.possible_mills:
         #     stones = 0
         #     empty = []
@@ -215,6 +214,9 @@ class AI:
         #             empty.append(place)
         #             print(empty[0])
         #
+        # empty[0] -> mill
+
+        # Check if we can 
         #     if(stones == 2 and len(empty) == 1):
         #         adje_list = []
         #         print (empty[0])
