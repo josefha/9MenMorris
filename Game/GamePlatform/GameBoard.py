@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 from GamePlatform.BoardSlot import BoardSlot
+from GamePlatform.Move import Move
+from GamePlatform.GameRules import detect_mill
 
 board_layout = """
 x--x--x
@@ -97,3 +99,16 @@ class GameBoard:
             if slot.owner == player:
                 player_slots.append(slot)
         return player_slots
+
+    def get_player_slots_outside_mills(self, player):
+        slots_outside_mills = []
+        for pos in self.board:
+            slot = self.board[pos]
+            if slot.owner == player:
+                # Detect mill requires a 'move' class
+                move = Move(player, slot, None)
+                # If we detected 0 mills,
+                # then this slot is outside an mill
+                if detect_mill(self, move) == 0:
+                    slots_outside_mills.append(slot)
+        return slots_outside_mills

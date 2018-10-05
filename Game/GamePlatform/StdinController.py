@@ -61,13 +61,21 @@ class StdinController(Controller):
             selected_slot = self.get_input_slot(
                 board, "You got a mill! Select a stone to remove")
             slot_owner = selected_slot.owner
-            if slot_owner is not None and slot_owner is not self.player:
-                move = Move(self.player, None, selected_slot)
-                is_valid_input = True
-            else:
+
+            slots_outside_mills = board.get_player_slots_outside_mills(
+                slot_owner)
+
+            if slot_owner is None or slot_owner is self.player:
                 print(
                     "\033[31mYou have to select one of your opponents stones\u001b[0m"
                 )
+
+            elif len(slots_outside_mills) > 0 and selected_slot not in slots_outside_mills:
+                print("\033[31mYou have to remove stones not in a mill "
+                      "before you remove stones inside a mill\u001b[0m")
+            else:
+                move = Move(self.player, None, selected_slot)
+                is_valid_input = True
 
         self.perform_move(board, move)
         return move
