@@ -273,11 +273,11 @@ class Ai:
         # Really bad moves are removed and there is no mill possible
         # and we also can't block opponent mills
         # -> check if there are good two turns move to get a mill
-        # TODO
 
         possible_two_step_moves = [] # save moves that are possible two step to a mill
-        for index,stone in enumerate(possible_stones):
-            for position in possible_positions[index]:
+
+        for index,stone in enumerate(better_possible_stones):
+            for position in better_possible_positions[index]:
                 newBoard = self.simulateMove(board, stone, position)
                 # Check if two steps simulate can form a mill
                 # for stone in new position, can it form a mill?
@@ -293,8 +293,11 @@ class Ai:
                         if (newBoard[place] == '_'):
                             adj.append(place)
                     if(len(adj) > 0):
-                        s_possible_stones.append(stone)
+                        s_possible_stones.append(my_stone)
                         s_possible_positions.append(adj)
+
+                # print(s_possible_stones)
+                # print(s_possible_positions)
 
                 for s_index, s_stone in enumerate(s_possible_stones):
                     for s_position in s_possible_positions[s_index]:
@@ -302,14 +305,17 @@ class Ai:
                         # s_newBoard we have simulated two moves from board
                         # (and we skipped opponents move)
 
+
                         for mill in self.possible_mills:
                             if s_position in mill:
                                 count = 0
                                 for place in mill:
-                                    if(newBoard[place] == char):
+                                    if(s_newBoard[place] == char):
                                         count = count + 1
 
+                                #print(count)
                                 if(count == 3):
+                                    print("FOUND 3 in a row after two moves")
                                     # here we found two moves who led to a mill
                                     # now check if opponent can block it
 
