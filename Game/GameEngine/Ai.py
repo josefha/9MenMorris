@@ -183,10 +183,9 @@ class Ai:
     def getRotateMove(self, board, player_char):
         char = player_char
         my_stones = self.getStonesPos(board, char)
-        empty_positions = self.getEmptyPositions(board)
         opponents_char = self.getOpponentPlayerChar(char)
 
-        #Get possible moves
+        # Get all possible moves
         possible_stones = []
         possible_positions = []
         for stone in my_stones:
@@ -202,7 +201,7 @@ class Ai:
         better_possible_stones = possible_stones[:]
         better_possible_positions = possible_positions[:]
 
-        # Look for good moves to make
+        # Look for if mill is possible and remove really bad moves
         for index,stone in enumerate(possible_stones):
             for position in possible_positions[index]:
                 newBoard = self.simulateMove(board, stone, position)
@@ -225,6 +224,7 @@ class Ai:
                             if(newBoard[place] == opponents_char):
                                 count = count + 1
                                 enemy_stones_in_mill.append(place)
+
                         # if we oppened a mill -> check if any enemy stone can move there
                         if(count == 2):
                             all_enemy_stones = self.getStonesOpponentPos(newBoard, char)
@@ -270,19 +270,75 @@ class Ai:
                                     return stone, position
 
 
+        # Really bad moves are removed and there is no mill possible
+        # and we also can't block opponent mills
+        # -> check if there are good two turns move to get a mill
+        # TODO
 
-
-        # really bad moves removed and there is no mill possible
-        # and we can't block opponent mills
+        possible_two_step_moves = [] # save moves that are possible two step to a mill
         for index,stone in enumerate(possible_stones):
             for position in possible_positions[index]:
                 newBoard = self.simulateMove(board, stone, position)
-                # check if two steps simulate can form a mill
+                # Check if two steps simulate can form a mill
+                # for stone in new position, can it form a mill?
+                # take it if opponent can't block it next turn
+
+                # Simulate one more move for every simulated move
+                s_my_stones = self.getStonesPos(newBoard, char)
+                s_possible_stones = []
+                s_possible_positions = []
+                for my_stone in s_my_stones:
+                    adj = []
+                    for place in self.adjecent_list[my_stone]:
+                        if (newBoard[place] == '_'):
+                            adj.append(place)
+                    if(len(adj) > 0):
+                        s_possible_stones.append(stone)
+                        s_possible_positions.append(adj)
+
+                for s_index, s_stone in enumerate(s_possible_stones):
+                    for s_position in s_possible_positions[s_index]:
+                        s_newBoard = self.simulateMove(newBoard, s_stone, s_position)
+                        # s_newBoard we have simulated two moves from board
+                        # (and we skipped opponents move)
+
+                        for mill in self.possible_mills:
+                            if s_position in mill:
+                                count = 0
+                                for place in mill:
+                                    if(newBoard[place] == char):
+                                        count = count + 1
+
+                                if(count == 3):
+                                    # here we found two moves who led to a mill
+                                    # now check if opponent can block it
+
+                                    # This is after one simulated move
+                                    all_enemy_stones = self.getStonesOpponentPos(newBoard, char)
+
+                                    good_move = True
+                                    for enemy_stone in all_enemy_stones:
+                                        if s_position in self.adjecent_list[enemy_stone]:
+                                            # Here the opponent could block the mill
+                                            # before we get a chance make two moves
+                                            good_move = False
+                                            break
+
+                                    # enemy could not block two step move -> add it
+                                    if(good_move):
+                                        possible_two_step_moves.append([stone, position])
 
 
-        # TODO This can be hard.. will pass on it for now
-        #
-        # Reform 3 stones in an triangle to
+
+
+        # make one of the moves towards a mill if oppponent cant block it
+        if (len(possible_two_step_moves) > 0):
+            print("Made move towards mill")
+            sleep(1)
+            index = random.randrange(len(possible_two_step_moves))
+            init_place = possible_two_step_moves[index][0]
+            move = possible_two_step_moves[index][1]
+            return init_place, move
 
 
         result_possible_stones = better_possible_stones[:]
