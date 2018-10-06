@@ -1,4 +1,5 @@
 import random
+from time import sleep
 
 #  Methods that can be used:
 # .getPlaceMove(board, player_char)           --> Return a position (int)
@@ -91,12 +92,10 @@ class Ai:
         # place a stone next to your own stone towords a mill
         # if last place in mill is empty
         for place in my_stones:
-            print(place)
             for adj_place in self.adjecent_list[place]:
                 if(board[adj_place] == '_'):
                     for possible_mill in self.possible_mills:
                         if(place in possible_mill and adj_place in possible_mill):
-                            print(possible_mill)
                             empty_places_count = 0
                             for pos in possible_mill:
                                 if(board[pos] == '_'):
@@ -185,10 +184,11 @@ class Ai:
         char = player_char
         my_stones = self.getStonesPos(board, char)
         empty_positions = self.getEmptyPositions(board)
+        opponents_char = self.getOpponentPlayerChar(char)
 
         #Get possible moves
         possible_stones = []
-        possible_postions = []
+        possible_positions = []
         for stone in my_stones:
             adj = []
             for place in self.adjecent_list[stone]:
@@ -196,31 +196,91 @@ class Ai:
                     adj.append(place)
             if(len(adj) > 0):
                 possible_stones.append(stone)
-                possible_postions.append(adj)
+                possible_positions.append(adj)
 
+
+        better_possible_stones = possible_stones[:]
+        better_possible_positions = possible_positions[:]
 
         # Look for good moves to make
-        # TODO
-        for i,stone in enumerate(possible_stones):
-            for position in possible_postions[i]:
+        for index,stone in enumerate(possible_stones):
+            for position in possible_positions[index]:
                 newBoard = self.simulateMove(board, stone, position)
                 # check if move made a mill -> take it
+                for mill in self.possible_mills:
+                    if position in mill:
+                        count = 0
+                        for place in mill:
+                            if(newBoard[place] == char):
+                                count = count + 1
+                        if(count == 3):
+                            return stone, position
+
                 # remove moves that opens mills for the opponents
+                for mill in self.possible_mills:
+                    if stone in mill:
+                        count = 0
+                        enemy_stones_in_mill = []
+                        for place in mill:
+                            if(newBoard[place] == opponents_char):
+                                count = count + 1
+                                enemy_stones_in_mill.append(place)
+                        # if we oppened a mill -> check if any enemy stone can move there
+                        if(count == 2):
+                            all_enemy_stones = self.getStonesOpponentPos(newBoard, char)
+                            for enemy_stone in enemy_stones_in_mill:
+                                all_enemy_stones.remove(enemy_stone)
+
+                            for enemy_stone in all_enemy_stones:
+                                if stone in self.adjecent_list[enemy_stone]:
+                                    # Now we now that our move made it possible for
+                                    # and oppononent mill -> remove it from new
+                                    # index = index of the current stone we want to move
+                                    better_possible_positions[index].remove(position)
+                                    print("did this really work ? lol ")
+
+
+
+
+
+
+
+
                 # check if move blocked opponent mill (and did not open for a new mill)
-                break
 
-        print("made a random rotate move")
-        print (possible_stones)
-        print (possible_postions)
+                # check if two steps can form a mill
 
-        p_i = random.randrange(len(possible_stones))
-        s_i = random.randrange(len(possible_postions[p_i]))
+                # Reform 3 stones in an triangle
 
-        #e_i = random.randrange(len(empty_positions))
-        init_place = possible_stones[p_i]
-        move = possible_postions[p_i][s_i]
 
-        return init_place, move
+
+
+        result_possible_stones = better_possible_stones[:]
+        result_possible_positions = better_possible_positions[:]
+
+
+        # Remove stone from possible moves if there are not any moves it can make
+        for index, stone in enumerate(better_possible_stones):
+            if better_possible_positions[index] == []:
+                del result_possible_stones[index]
+                del result_possible_positions[index]
+
+        if(len(result_possible_stones) == 0):
+            print("made a compleatly random rotate move")
+            # make a random move if no good move is availible
+            p_i = random.randrange(len(possible_stones))
+            s_i = random.randrange(len(possible_positions[p_i]))
+            init_place = possible_stones[p_i]
+            move = possible_positions[p_i][s_i]
+        else:
+            print("made a random OKEY rotate move")
+            # make a random move of the ones that are not bad
+            p_i = random.randrange(len(result_possible_stones))
+            s_i = random.randrange(len(result_possible_positions[p_i]))
+            init_place = result_possible_stones[p_i]
+            move = result_possible_positions[p_i][s_i]
+
+            return init_place, move
 
     # PHASE 3 --- Returns a move to fly a stone in third step
     def getFlyingMove(self, board, player_char):
