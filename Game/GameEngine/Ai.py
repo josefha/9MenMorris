@@ -240,19 +240,49 @@ class Ai:
                                     print("did this really work ? lol ")
 
 
+        # Check if a move blocks an opponent mill -> take it
+        # If the move oppened for another opponent mill
+        # it has already been removed
+        for index,stone in enumerate(possible_stones):
+            for position in possible_positions[index]:
+                newBoard = self.simulateMove(board, stone, position)
+                for mill in self.possible_mills:
+                    if position in mill:
+                        count = 0
+                        enemy_stones_in_mill = []
+                        for place in mill:
+                            if(newBoard[place] == opponents_char):
+                                count = count + 1
+                                enemy_stones_in_mill.append(place)
+                        if(count == 2):
+                            # Now we have moved to a place where where opponent
+                            # had two stones in a row -> check if any other
+                            # of opponents stones could move there -> if so block it
+                            all_enemy_stones = self.getStonesOpponentPos(newBoard, char)
+                            for enemy_stone in enemy_stones_in_mill:
+                                all_enemy_stones.remove(enemy_stone)
+
+                            for enemy_stone in all_enemy_stones:
+                                if position in self.adjecent_list[enemy_stone]:
+                                    #Make a blocking move
+                                    print("Made a blocking move")
+                                    sleep(1)
+                                    return stone, position
 
 
 
 
+        # really bad moves removed and there is no mill possible
+        # and we can't block opponent mills
+        for index,stone in enumerate(possible_stones):
+            for position in possible_positions[index]:
+                newBoard = self.simulateMove(board, stone, position)
+                # check if two steps simulate can form a mill
 
 
-                # check if move blocked opponent mill (and did not open for a new mill)
-
-                # check if two steps can form a mill
-
-                # Reform 3 stones in an triangle
-
-
+        # TODO This can be hard.. will pass on it for now
+        #
+        # Reform 3 stones in an triangle to
 
 
         result_possible_stones = better_possible_stones[:]
