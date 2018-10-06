@@ -268,10 +268,17 @@ class Ai:
         if(len(result_possible_stones) == 0):
             print("made a compleatly random rotate move")
             # make a random move if no good move is availible
-            p_i = random.randrange(len(possible_stones))
-            s_i = random.randrange(len(possible_positions[p_i]))
-            init_place = possible_stones[p_i]
-            move = possible_positions[p_i][s_i]
+            result_possible_stones = possible_stones[:]
+            result_possible_positions = possible_positions[:]
+
+            for index, stone in enumerate(possible_stones):
+                if possible_positions[index] == []:
+                    del result_possible_stones[index]
+                    del result_possible_positions[index]
+            p_i = random.randrange(len(result_possible_stones))
+            s_i = random.randrange(len(result_possible_positions[p_i]))
+            init_place = result_possible_stones[p_i]
+            move = result_possible_positions[p_i][s_i]
         else:
             print("made a random OKEY rotate move")
             # make a random move of the ones that are not bad
