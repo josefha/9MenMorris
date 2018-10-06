@@ -86,8 +86,6 @@ class Ai:
                     empty.append(place)
 
             if(stones == 2 and len(empty) == 1):
-                print(possible_mill)
-                print(empty)
                 return empty[0]
 
         # place a stone next to your own stone towords a mill
@@ -97,7 +95,6 @@ class Ai:
             for adj_place in self.adjecent_list[place]:
                 if(board[adj_place] == '_'):
                     for possible_mill in self.possible_mills:
-                        # TODO fix, check if your own stones...
                         if(place in possible_mill and adj_place in possible_mill):
                             print(possible_mill)
                             empty_places_count = 0
@@ -105,7 +102,6 @@ class Ai:
                                 if(board[pos] == '_'):
                                     empty_places_count = empty_places_count + 1
                             if(empty_places_count == 2):
-                                print("AI placed a second stone towards a mill")
                                 return adj_place
 
         # Place in middle positions if empty
@@ -125,10 +121,7 @@ class Ai:
         return empty_places[index]
 
     def getRemoveStone(self, board, player_char):
-        # NOTE that we have changed players turn before this turn
-
-        # --> getCurrentPlayerChar() returns the opponents stones
-        # insted of the players that actually are removing stones
+        # Change char to opponents char
         if(player_char == 'X'):
             char = 'O'
         else:
@@ -137,7 +130,6 @@ class Ai:
         enemyStones = self.getStonesPos(board, char)
 
         # If enemy player can get a mill next turn remove one of those two stones
-        # TODO Check if working
         for possible_mill in self.possible_mills:
             stones = 0
             empty = []
@@ -150,10 +142,10 @@ class Ai:
                     empty.append(place)
 
             if(stones == 2 and len(empty) == 1):
-                # Remove middle one or a random ?
-                print("removing towards mill")
                 return enemy_places[1]
 
+        # Rule check, you should not be able to remove a stone
+        # that already is in a mill if there are others
         for possible_mill in self.possible_mills:
             stones = 0
             empty = []
@@ -172,12 +164,21 @@ class Ai:
 
 
         if len(enemyStones) == 0:
+            # remove an random stone if all are in mills
             enemyStones = self.getStonesPos(board, char)
             index = random.randrange(len(enemyStones))
             return enemyStones[index]
         else:
+            # remove an random stone outside an mill
             index = random.randrange(len(enemyStones))
             return enemyStones[index]
+
+    def simulateMove(self, board, stone_place, new_place):
+        newBoard = board[:] # makes a copy of current board state
+        char = newBoard[stone_place]
+        newBoard[stone_place] = '_'
+        newBoard[new_place] = char
+        return newBoard
 
     # PHASE 2 --- Returns a move to rotate a stone in second step
     def getRotateMove(self, board, player_char):
@@ -185,6 +186,7 @@ class Ai:
         my_stones = self.getStonesPos(board, char)
         empty_positions = self.getEmptyPositions(board)
 
+        #Get possible moves
         possible_stones = []
         possible_postions = []
         for stone in my_stones:
@@ -196,13 +198,22 @@ class Ai:
                 possible_stones.append(stone)
                 possible_postions.append(adj)
 
+
+        # Look for good moves to make
+        # TODO
+        for i,stone in enumerate(possible_stones):
+            for position in possible_postions[i]:
+                newBoard = self.simulateMove(board, stone, position)
+                # check if move made a mill -> take it
+                # remove moves that opens mills for the opponents
+                # check if move blocked opponent mill (and did not open for a new mill)
+                break
+
         print("made a random rotate move")
         print (possible_stones)
         print (possible_postions)
 
         p_i = random.randrange(len(possible_stones))
-        # TODO check that they are adjecent
-
         s_i = random.randrange(len(possible_postions[p_i]))
 
         #e_i = random.randrange(len(empty_positions))
@@ -211,7 +222,6 @@ class Ai:
 
         return init_place, move
 
-    # TODO
     # PHASE 3 --- Returns a move to fly a stone in third step
     def getFlyingMove(self, board, player_char):
         char = player_char

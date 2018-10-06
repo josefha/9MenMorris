@@ -43,7 +43,7 @@ class GameManager:
         winner = None
 
         while not is_game_over:
-            sleep(0.5)
+            sleep(0.5) # For CPU Agains CPU
             if self.step_count > TURNS_FOR_DRAW:
                 winner = None
                 return winner
