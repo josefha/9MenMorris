@@ -350,12 +350,14 @@ class Ai:
         result_possible_stones = better_possible_stones[:]
         result_possible_positions = better_possible_positions[:]
 
-
         # Remove stone from possible moves if there are not any moves it can make
         for index, stone in enumerate(better_possible_stones):
-            if better_possible_positions[index] == []:
-                del result_possible_stones[index]
-                del result_possible_positions[index]
+            i = 0
+            if len(better_possible_positions[index]) == 0:
+                del result_possible_stones[i]
+                del result_possible_positions[i]
+            else:
+                i = i + 1
 
         if(len(result_possible_stones) == 0):
             print("made a compleatly random rotate move")
@@ -363,10 +365,14 @@ class Ai:
             result_possible_stones = possible_stones[:]
             result_possible_positions = possible_positions[:]
 
+            # Removes stone that can't move any direction.. 
             for index, stone in enumerate(possible_stones):
-                if possible_positions[index] == []:
-                    del result_possible_stones[index]
-                    del result_possible_positions[index]
+                i = 0
+                if len(possible_positions[index]) == 1:
+                    del result_possible_stones[i]
+                    del result_possible_positions[i]
+                else:
+                    i = i + 1
             p_i = random.randrange(len(result_possible_stones))
             s_i = random.randrange(len(result_possible_positions[p_i]))
             init_place = result_possible_stones[p_i]
