@@ -349,6 +349,8 @@ class Ai:
 
         result_possible_stones = better_possible_stones[:]
         result_possible_positions = better_possible_positions[:]
+        print(result_possible_stones)
+        print(result_possible_positions)
 
         # Remove stone from possible moves if there are not any moves it can make
         for index, stone in enumerate(better_possible_stones):
@@ -358,14 +360,15 @@ class Ai:
                 del result_possible_positions[i]
             else:
                 i = i + 1
+        print(result_possible_stones)
+        print(result_possible_positions)            
 
         if(len(result_possible_stones) == 0):
-            print("made a compleatly random rotate move")
             # make a random move if no good move is availible
             result_possible_stones = possible_stones[:]
             result_possible_positions = possible_positions[:]
 
-            # Removes stone that can't move any direction.. 
+            # Removes stone that can't move any direction..
             for index, stone in enumerate(possible_stones):
                 i = 0
                 if len(possible_positions[index]) == 1:
@@ -377,8 +380,8 @@ class Ai:
             s_i = random.randrange(len(result_possible_positions[p_i]))
             init_place = result_possible_stones[p_i]
             move = result_possible_positions[p_i][s_i]
+            return init_place, move
         else:
-            print("made a random OKEY rotate move")
             # make a random move of the ones that are not bad
             p_i = random.randrange(len(result_possible_stones))
             s_i = random.randrange(len(result_possible_positions[p_i]))
@@ -393,7 +396,48 @@ class Ai:
         my_stones = self.getStonesPos(board, player_char)
         empty_positions = self.getEmptyPositions(board)
 
-        print("made a random flying move")
+        # Move to mill if possible
+        for mill in self.possible_mills:
+            for position in mill:
+                count = 0
+                empty_pos = []
+                if(board[position] == char):
+                    count = count + 1
+                elif(board[position] == '_'):
+                    empty_pos.append(position)
+
+            # if we can move to a mill
+            if(count == 2 and len(empty_pos) == 1):
+                my_stones = self.getStonesPos(board, char)
+                for stone in my_stones:
+                    if(stone not in mill):
+                        print("flying to mill")
+                        return stone, empty_pos[0]
+
+
+
+        # fly stone towards a mill if rest of mill is empty
+        for place in my_stones:
+            for adj_place in self.adjecent_list[place]:
+                if(board[adj_place] == '_'):
+                    for possible_mill in self.possible_mills:
+                        if(place in possible_mill and adj_place in possible_mill):
+                            empty_places_count = 0
+                            for pos in possible_mill:
+                                if(board[pos] == '_'):
+                                    empty_places_count = empty_places_count + 1
+                            if(empty_places_count == 2):
+                                # get which stone to move
+                                init_place = my_stones[0]
+                                for my_stone in my_stones:
+                                    if (my_stone != place):
+                                        init_place = my_stone
+                                        break
+                                return my_stone, adj_place
+
+
+
+
         s_i = random.randrange(len(my_stones))
         e_i = random.randrange(len(empty_positions))
         init_place = my_stones[s_i]
