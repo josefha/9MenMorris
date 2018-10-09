@@ -23,6 +23,7 @@ class Ai:
         self.possible_mills = [[0,1,2],[3,4,5],[6,7,8],[9,10,11],[12,13,14],[15,16,17],[18,19,20],[21,22,23],
                         [0,9,21],[3,10,18],[6,11,15],[1,4,7],[16,19,22],[8,12,17],[5,13,20],[2,14,23]]
 
+    # Returns empty postions in board
     def getEmptyPositions(self, board):
         empty_places = []
         for i, place in enumerate(board):
@@ -38,6 +39,7 @@ class Ai:
                 positions.append(i)
         return positions
 
+    # Returns postions of opponents stones
     def getStonesOpponentPos(self, board, char):
         if(char == 'X'):
             char = 'O'
@@ -49,13 +51,20 @@ class Ai:
             if place == char:
                 positions.append(i)
         return positions
-
+    # Returns opponents player character
     def getOpponentPlayerChar(self, char):
         if(char == 'X'):
             return 'O'
         else:
             return 'X'
 
+    # Returns a board with a move made
+    def simulateMove(self, board, stone_place, new_place):
+        newBoard = board[:] # makes a copy of current board state
+        char = newBoard[stone_place]
+        newBoard[stone_place] = '_'
+        newBoard[new_place] = char
+        return newBoard
 
     # PHASE 1 --- Returns a move to place a stone in first step
     def getPlaceMove(self, board, player_char):
@@ -63,8 +72,6 @@ class Ai:
         my_stones = self.getStonesPos(board, char)
 
         if (self.complexity != 1):
-
-
             # place a stone to get mill if possible
             for possible_mill in self.possible_mills:
                 stones = 0
@@ -121,6 +128,7 @@ class Ai:
         index = random.randrange(len(empty_places))
         return empty_places[index]
 
+    # Returns a move to remove an opponent stone
     def getRemoveStone(self, board, player_char):
         # Change char to opponents char
         if(player_char == 'X'):
@@ -173,13 +181,6 @@ class Ai:
             # remove an random stone outside an mill
             index = random.randrange(len(enemyStones))
             return enemyStones[index]
-
-    def simulateMove(self, board, stone_place, new_place):
-        newBoard = board[:] # makes a copy of current board state
-        char = newBoard[stone_place]
-        newBoard[stone_place] = '_'
-        newBoard[new_place] = char
-        return newBoard
 
     # PHASE 2 --- Returns a move to rotate a stone in second step
     def getRotateMove(self, board, player_char):
@@ -342,9 +343,6 @@ class Ai:
                                     if(good_move):
                                         possible_two_step_moves.append([stone, position])
 
-
-
-
         # make one of the moves towards a mill if oppponent cant block it
         if (len(possible_two_step_moves) > 0):
             sleep(1)
@@ -358,7 +356,6 @@ class Ai:
         result_possible_positions = better_possible_positions[:]
 
         # Remove stone from possible moves if there are not any moves it can make
-
         i = 0
         for index, stone in enumerate(better_possible_stones):
             if (len(better_possible_positions[index]) == 0):
@@ -418,8 +415,6 @@ class Ai:
                         if(stone not in mill):
                             return stone, empty_pos[0]
 
-
-
             # fly stone towards a mill if rest of mill is empty
             for place in my_stones:
                 for adj_place in self.adjecent_list[place]:
@@ -438,9 +433,6 @@ class Ai:
                                             init_place = my_stone
                                             break
                                     return my_stone, adj_place
-
-
-
 
         s_i = random.randrange(len(my_stones))
         e_i = random.randrange(len(empty_positions))

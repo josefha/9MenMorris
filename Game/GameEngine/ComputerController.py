@@ -15,8 +15,6 @@ class ComputerController(Controller):
         self.translator = BoardTranslator()
 
     def make_move(self, board, phase):
-        # TODO Get who turn it is
-
         old_board = self.translator.getOldBoard(board.board)
         player_char = self.translator.getCurrentPlayerChar(self.player)
 
@@ -53,6 +51,3 @@ class ComputerController(Controller):
         move = Move(self.player, None, board.get_slot(selected_postion))
         self.perform_move(board, move)
         return move
-
-
-        #TODO ADD AI Functions

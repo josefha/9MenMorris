@@ -55,6 +55,8 @@ class BoardTranslator:
               23:77
         }
 
+
+    # Transforms Board to old format
     def getOldBoard(self, newBoard):
         oldBoard = []
 
@@ -70,13 +72,16 @@ class BoardTranslator:
 
         return oldBoard
 
+    # Transforms old postion to new
     def getNewPos(self, oldPos):
         return str(self.oldToNew[oldPos])
 
+    # Transforms new postion to old
     def getOldPos(self, newPos):
         newPos = int(newPos)
         return self.newToOld[newPos]
 
+    # returns current player in old format
     def getCurrentPlayerChar(self, player):
         if(player.stone_type == 'black'):
             return 'X'
