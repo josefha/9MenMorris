@@ -62,46 +62,49 @@ class Ai:
         char = player_char
         my_stones = self.getStonesPos(board, char)
 
-        # place a stone to get mill if possible
-        for possible_mill in self.possible_mills:
-            stones = 0
-            empty = []
-            for place in possible_mill:
-                if(board[place] == char):
-                    stones = stones + 1
-                elif(board[place] == '_'):
-                    empty.append(place)
+        if (self.complexity != 1):
 
-            if(stones == 2 and len(empty) == 1):
-                return empty[0]
 
-        # place a stone to stop opponents mill
-        opponents_char = self.getOpponentPlayerChar(char)
-        for possible_mill in self.possible_mills:
-            stones = 0
-            empty = []
-            for place in possible_mill:
-                if(board[place] == opponents_char):
-                    stones = stones + 1
-                elif(board[place] == '_'):
-                    empty.append(place)
+            # place a stone to get mill if possible
+            for possible_mill in self.possible_mills:
+                stones = 0
+                empty = []
+                for place in possible_mill:
+                    if(board[place] == char):
+                        stones = stones + 1
+                    elif(board[place] == '_'):
+                        empty.append(place)
 
-            if(stones == 2 and len(empty) == 1):
-                return empty[0]
+                if(stones == 2 and len(empty) == 1):
+                    return empty[0]
+            if (self.complexity == 3):
+            # place a stone to stop opponents mill
+                opponents_char = self.getOpponentPlayerChar(char)
+                for possible_mill in self.possible_mills:
+                    stones = 0
+                    empty = []
+                    for place in possible_mill:
+                        if(board[place] == opponents_char):
+                            stones = stones + 1
+                        elif(board[place] == '_'):
+                            empty.append(place)
 
-        # place a stone next to your own stone towords a mill
-        # if last place in mill is empty
-        for place in my_stones:
-            for adj_place in self.adjecent_list[place]:
-                if(board[adj_place] == '_'):
-                    for possible_mill in self.possible_mills:
-                        if(place in possible_mill and adj_place in possible_mill):
-                            empty_places_count = 0
-                            for pos in possible_mill:
-                                if(board[pos] == '_'):
-                                    empty_places_count = empty_places_count + 1
-                            if(empty_places_count == 2):
-                                return adj_place
+                    if(stones == 2 and len(empty) == 1):
+                        return empty[0]
+
+            # place a stone next to your own stone towords a mill
+            # if last place in mill is empty
+            for place in my_stones:
+                for adj_place in self.adjecent_list[place]:
+                    if(board[adj_place] == '_'):
+                        for possible_mill in self.possible_mills:
+                            if(place in possible_mill and adj_place in possible_mill):
+                                empty_places_count = 0
+                                for pos in possible_mill:
+                                    if(board[pos] == '_'):
+                                        empty_places_count = empty_places_count + 1
+                                if(empty_places_count == 2):
+                                    return adj_place
 
         # Place in middle positions if empty
         random_list = []
@@ -127,21 +130,21 @@ class Ai:
             char = 'X'
 
         enemyStones = self.getStonesPos(board, char)
+        if (self.complexity != 1):
+            # If enemy player can get a mill next turn remove one of those two stones
+            for possible_mill in self.possible_mills:
+                stones = 0
+                empty = []
+                enemy_places = []
+                for place in possible_mill:
+                    if(board[place] == char):
+                        stones = stones + 1
+                        enemy_places.append(place)
+                    elif(board[place] == '_'):
+                        empty.append(place)
 
-        # If enemy player can get a mill next turn remove one of those two stones
-        for possible_mill in self.possible_mills:
-            stones = 0
-            empty = []
-            enemy_places = []
-            for place in possible_mill:
-                if(board[place] == char):
-                    stones = stones + 1
-                    enemy_places.append(place)
-                elif(board[place] == '_'):
-                    empty.append(place)
-
-            if(stones == 2 and len(empty) == 1):
-                return enemy_places[1]
+                if(stones == 2 and len(empty) == 1):
+                    return enemy_places[1]
 
         # Rule check, you should not be able to remove a stone
         # that already is in a mill if there are others
@@ -201,6 +204,21 @@ class Ai:
         better_possible_stones = possible_stones[:]
         better_possible_positions = possible_positions[:]
 
+        if (self.complexity == 1):
+            print("made a compleatly random rotate move")
+            # make a random move if no good move is availible
+            result_possible_stones = possible_stones[:]
+            result_possible_positions = possible_positions[:]
+
+            for index, stone in enumerate(possible_stones):
+                if possible_positions[index] == []:
+                    del result_possible_stones[index]
+                    del result_possible_positions[index]
+            p_i = random.randrange(len(result_possible_stones))
+            s_i = random.randrange(len(result_possible_positions[p_i]))
+            init_place = result_possible_stones[p_i]
+            move = result_possible_positions[p_i][s_i]
+            return init_place, move
         # Look for if mill is possible and remove really bad moves
         for index,stone in enumerate(possible_stones):
             for position in possible_positions[index]:
@@ -214,30 +232,30 @@ class Ai:
                                 count = count + 1
                         if(count == 3):
                             return stone, position
+                if (self.complexity == 3):
+                    # remove moves that opens mills for the opponents
+                    for mill in self.possible_mills:
+                        if stone in mill:
+                            count = 0
+                            enemy_stones_in_mill = []
+                            for place in mill:
+                                if(newBoard[place] == opponents_char):
+                                    count = count + 1
+                                    enemy_stones_in_mill.append(place)
 
-                # remove moves that opens mills for the opponents
-                for mill in self.possible_mills:
-                    if stone in mill:
-                        count = 0
-                        enemy_stones_in_mill = []
-                        for place in mill:
-                            if(newBoard[place] == opponents_char):
-                                count = count + 1
-                                enemy_stones_in_mill.append(place)
+                            # if we oppened a mill -> check if any enemy stone can move there
+                            if(count == 2):
+                                all_enemy_stones = self.getStonesOpponentPos(newBoard, char)
+                                for enemy_stone in enemy_stones_in_mill:
+                                    all_enemy_stones.remove(enemy_stone)
 
-                        # if we oppened a mill -> check if any enemy stone can move there
-                        if(count == 2):
-                            all_enemy_stones = self.getStonesOpponentPos(newBoard, char)
-                            for enemy_stone in enemy_stones_in_mill:
-                                all_enemy_stones.remove(enemy_stone)
-
-                            for enemy_stone in all_enemy_stones:
-                                if stone in self.adjecent_list[enemy_stone]:
-                                    # Now we now that our move made it possible for
-                                    # and oppononent mill -> remove it from new
-                                    # index = index of the current stone we want to move
-                                    better_possible_positions[index].remove(position)
-                                    print("did this really work ? lol ")
+                                for enemy_stone in all_enemy_stones:
+                                    if stone in self.adjecent_list[enemy_stone]:
+                                        # Now we now that our move made it possible for
+                                        # and oppononent mill -> remove it from new
+                                        # index = index of the current stone we want to move
+                                        better_possible_positions[index].remove(position)
+                                        print("did this really work ? lol ")
 
 
         # Check if a move blocks an opponent mill -> take it
@@ -371,6 +389,7 @@ class Ai:
             s_i = random.randrange(len(result_possible_positions[p_i]))
             init_place = result_possible_stones[p_i]
             move = result_possible_positions[p_i][s_i]
+            return init_place, move
         else:
             print("made a random OKEY rotate move")
             # make a random move of the ones that are not bad
