@@ -117,7 +117,6 @@ class Ai:
             random_number = random.choice(random_list)
             return (random_number)
 
-        print("AI made a random move, no good move was found")
         empty_places = self.getEmptyPositions(board)
         index = random.randrange(len(empty_places))
         return empty_places[index]
@@ -205,7 +204,6 @@ class Ai:
         better_possible_positions = possible_positions[:]
 
         if (self.complexity == 1):
-            print("made a compleatly random rotate move")
             # make a random move if no good move is availible
             result_possible_stones = possible_stones[:]
             result_possible_positions = possible_positions[:]
@@ -255,7 +253,6 @@ class Ai:
                                         # and oppononent mill -> remove it from new
                                         # index = index of the current stone we want to move
                                         better_possible_positions[index].remove(position)
-                                        print("did this really work ? lol ")
 
 
         # Check if a move blocks an opponent mill -> take it
@@ -283,8 +280,6 @@ class Ai:
                             for enemy_stone in all_enemy_stones:
                                 if position in self.adjecent_list[enemy_stone]:
                                     #Make a blocking move
-                                    print("Made a blocking move")
-                                    sleep(1)
                                     return stone, position
 
 
@@ -314,9 +309,6 @@ class Ai:
                         s_possible_stones.append(my_stone)
                         s_possible_positions.append(adj)
 
-                # print(s_possible_stones)
-                # print(s_possible_positions)
-
                 for s_index, s_stone in enumerate(s_possible_stones):
                     for s_position in s_possible_positions[s_index]:
                         s_newBoard = self.simulateMove(newBoard, s_stone, s_position)
@@ -331,9 +323,7 @@ class Ai:
                                     if(s_newBoard[place] == char):
                                         count = count + 1
 
-                                #print(count)
                                 if(count == 3):
-                                    print("FOUND 3 in a row after two moves")
                                     # here we found two moves who led to a mill
                                     # now check if opponent can block it
 
@@ -357,7 +347,6 @@ class Ai:
 
         # make one of the moves towards a mill if oppponent cant block it
         if (len(possible_two_step_moves) > 0):
-            print("Made move towards mill")
             sleep(1)
             index = random.randrange(len(possible_two_step_moves))
             init_place = possible_two_step_moves[index][0]
@@ -367,19 +356,16 @@ class Ai:
 
         result_possible_stones = better_possible_stones[:]
         result_possible_positions = better_possible_positions[:]
-        print(result_possible_stones)
-        print(result_possible_positions)
 
         # Remove stone from possible moves if there are not any moves it can make
+
+        i = 0
         for index, stone in enumerate(better_possible_stones):
-            i = 0
-            if len(better_possible_positions[index]) == 0:
+            if (len(better_possible_positions[index]) == 0):
                 del result_possible_stones[i]
                 del result_possible_positions[i]
             else:
                 i = i + 1
-        print(result_possible_stones)
-        print(result_possible_positions)            
 
         if(len(result_possible_stones) == 0):
             # make a random move if no good move is availible
@@ -387,8 +373,8 @@ class Ai:
             result_possible_positions = possible_positions[:]
 
             # Removes stone that can't move any direction..
+            i = 0
             for index, stone in enumerate(possible_stones):
-                i = 0
                 if len(possible_positions[index]) == 1:
                     del result_possible_stones[i]
                     del result_possible_positions[i]
@@ -414,44 +400,44 @@ class Ai:
         my_stones = self.getStonesPos(board, player_char)
         empty_positions = self.getEmptyPositions(board)
 
-        # Move to mill if possible
-        for mill in self.possible_mills:
-            for position in mill:
-                count = 0
-                empty_pos = []
-                if(board[position] == char):
-                    count = count + 1
-                elif(board[position] == '_'):
-                    empty_pos.append(position)
+        if(self.complexity != 1):
+            # Move to mill if possible
+            for mill in self.possible_mills:
+                for position in mill:
+                    count = 0
+                    empty_pos = []
+                    if(board[position] == char):
+                        count = count + 1
+                    elif(board[position] == '_'):
+                        empty_pos.append(position)
 
-            # if we can move to a mill
-            if(count == 2 and len(empty_pos) == 1):
-                my_stones = self.getStonesPos(board, char)
-                for stone in my_stones:
-                    if(stone not in mill):
-                        print("flying to mill")
-                        return stone, empty_pos[0]
+                # if we can move to a mill
+                if(count == 2 and len(empty_pos) == 1):
+                    my_stones = self.getStonesPos(board, char)
+                    for stone in my_stones:
+                        if(stone not in mill):
+                            return stone, empty_pos[0]
 
 
 
-        # fly stone towards a mill if rest of mill is empty
-        for place in my_stones:
-            for adj_place in self.adjecent_list[place]:
-                if(board[adj_place] == '_'):
-                    for possible_mill in self.possible_mills:
-                        if(place in possible_mill and adj_place in possible_mill):
-                            empty_places_count = 0
-                            for pos in possible_mill:
-                                if(board[pos] == '_'):
-                                    empty_places_count = empty_places_count + 1
-                            if(empty_places_count == 2):
-                                # get which stone to move
-                                init_place = my_stones[0]
-                                for my_stone in my_stones:
-                                    if (my_stone != place):
-                                        init_place = my_stone
-                                        break
-                                return my_stone, adj_place
+            # fly stone towards a mill if rest of mill is empty
+            for place in my_stones:
+                for adj_place in self.adjecent_list[place]:
+                    if(board[adj_place] == '_'):
+                        for possible_mill in self.possible_mills:
+                            if(place in possible_mill and adj_place in possible_mill):
+                                empty_places_count = 0
+                                for pos in possible_mill:
+                                    if(board[pos] == '_'):
+                                        empty_places_count = empty_places_count + 1
+                                if(empty_places_count == 2):
+                                    # get which stone to move
+                                    init_place = my_stones[0]
+                                    for my_stone in my_stones:
+                                        if (my_stone != place):
+                                            init_place = my_stone
+                                            break
+                                    return my_stone, adj_place
 
 
 
