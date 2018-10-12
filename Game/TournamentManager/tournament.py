@@ -78,7 +78,14 @@ def next_game_rr(num):
 
         game_manager = GameManager(TerminalRenderer(), sorted_list[0])
 
-        game_manager.start_game()
+        winner = game_manager.start_game()
+
+        if winner is not None:
+            winner.points = winner.points + 2
+        else:
+            # draw
+            for player in sorted_list[0]:
+                player.points = player.points + 1
 
         # simulate_game(sorted_list[0])
         del sorted_list[0]

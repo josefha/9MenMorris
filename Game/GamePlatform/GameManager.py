@@ -36,7 +36,10 @@ class GameManager:
     def start_game(self):
         winner = self.game_step()
         self.renderer.render_winner(winner)
-        return winner.tournament_player
+        if winner is not None:
+            return winner.tournament_player
+        else:
+            return None
 
     def game_step(self):
         is_game_over = False

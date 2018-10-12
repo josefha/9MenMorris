@@ -137,6 +137,7 @@ class Ai:
             char = 'X'
 
         enemyStones = self.getStonesPos(board, char)
+
         if (self.complexity != 1):
             # If enemy player can get a mill next turn remove one of those two stones
             for possible_mill in self.possible_mills:
@@ -167,9 +168,9 @@ class Ai:
                     empty.append(place)
 
             if(stones == 3 and len(empty) == 0):
-                enemyStones.remove(enemy_places[0])
-                enemyStones.remove(enemy_places[1])
-                enemyStones.remove(enemy_places[2])
+                for i in range(3):
+                    if enemy_places[i] in enemyStones:
+                        enemyStones.remove(enemy_places[i])
 
 
         if len(enemyStones) == 0:
@@ -400,9 +401,9 @@ class Ai:
         if(self.complexity != 1):
             # Move to mill if possible
             for mill in self.possible_mills:
+                count = 0
+                empty_pos = []
                 for position in mill:
-                    count = 0
-                    empty_pos = []
                     if(board[position] == char):
                         count = count + 1
                     elif(board[position] == '_'):
