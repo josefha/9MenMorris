@@ -84,6 +84,7 @@ class Ai:
 
                 if(stones == 2 and len(empty) == 1):
                     return empty[0]
+
             if (self.complexity == 3):
             # place a stone to stop opponents mill
                 opponents_char = self.getOpponentPlayerChar(char)

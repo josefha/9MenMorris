@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 from operator import itemgetter, attrgetter
 from random import shuffle
-from GamePlatform.GameManager import GameManager
-from GamePlatform.TerminalRenderer import TerminalRenderer
 import random
 
 
@@ -29,11 +27,32 @@ class Player:
         print(str(self.player_no) + ".", "Name: ", self.name, ", Games played", self.games_played,
               ", CPU level: ", self.cpu_level, "Points: ", self.points)
 
-    def update_score(self, point):
+    def update_player(self, point):
         self.points += point
-
-    def update_played(self):
         self.games_played += 1
+
+
+def simulate_game(list_input):
+
+    a = list_input[0][0]
+    b = list_input[1][0]
+
+    print("Next game will be between", players[a].name, "and", players[b].name+"!")
+
+    if random.randint(0, 10) == 7:
+        # gives player_no
+        print("It's a draw between", players[a].name, "and", players[b].name+"!")
+        players[a].update_player(1)
+        players[b].update_player(1)
+        winner = b
+    else:
+        shuffle(list_input)
+        winner = list_input[0][0]
+        loser = list_input[1][0]
+        players[winner].update_player(3)
+        players[loser].update_player(0)
+        print(players[winner].name, "won!")
+    return players[winner]
 
 
 # Next Game Round Robin
@@ -54,18 +73,7 @@ def next_game_rr(num):
         print("Round", x+1)
         updated_list = update_list(sorted_list)
         sorted_list = sort_played(sorted_list)
-
-        game_manager = GameManager(TerminalRenderer(), sorted_list[0])
-
-        winner = game_manager.start_game()
-        if(winner != None):
-            players[winner[0]].update_score(3)
-        else:
-            players[sorted_list[0][0][0]].update_score(1)
-            players[sorted_list[0][1][0]].update_score(1)
-        players[sorted_list[0][0][0]].update_played()
-        players[sorted_list[0][1][0]].update_played()
-        # simulate_game(sorted_list[0])
+        simulate_game(sorted_list[0])
         del sorted_list[0]
         print_rr_table()
 
@@ -90,98 +98,96 @@ def play_next_round(player_list, total_games, table_list, num):
     while i < len(player_list):
         try:
             m_list = [players[player_list[i][0]], players[player_list[i+1][0]]]
-
-            game_manager = GameManager(TerminalRenderer(), m_list)
-            winner = game_manager.start_game()
-
+            winner = simulate_game(m_list)
             table_list[total_games] = winner.name
-            print_t_table(table_list, num)
+            print_t_table(table_list,num)
             total_games = total_games + 1
             next_round.append(players[winner[0]])
-        except IndexError:
+        except:
             next_round.append(players[player_list[i][0]])
         i = i+2
         j += 1
     return next_round, total_games
 
 
-def print_t_table(m_list, list_input):
+def print_t_table(m_list,list_input):
     max_width = name_width(players)
     if(list_input == 3):
         print("\n##########\n")
         print(players[0].name)
-        print("-VS-".ljust(max_width), m_list[0])
+        print("-VS-".ljust(max_width),m_list[0])
         print(players[1].name)
         print("-VS-".rjust(max_width+6)+m_list[1].rjust(max_width+3)+"\n")
-        print(players[2].name, players[2].name.rjust(max_width))
+        print(players[2].name,players[2].name.rjust(max_width))
         print("\n##########\n")
     if(list_input == 4):
         print("\n##########\n")
         print(players[0].name)
-        print("-VS-".ljust(max_width), m_list[0])
+        print("-VS-".ljust(max_width),m_list[0])
         print(players[1].name+"\n")
         print("-VS-".rjust(max_width+6)+m_list[2].rjust(max_width+3)+"\n")
         print(players[2].name)
-        print("-VS-".ljust(max_width), m_list[1])
+        print("-VS-".ljust(max_width),m_list[1])
         print(players[3].name)
         print("\n##########\n")
     if(list_input == 5):
         print("\n##########\n")
         print(players[0].name)
-        print("-VS-".ljust(max_width), m_list[0])
-        print(players[1].name+"\n")
-        print("-VS-".rjust(max_width+6)+m_list[2].rjust(max_width+3)+"\n")
+        print("-VS-".ljust(max_width*2),m_list[0])
+        print(players[1].name+"\n\n")
+        print("-VS-".rjust((max_width*2)+6)+m_list[2].rjust(max_width+1))
         print(players[2].name)
-        print("-VS-".ljust(max_width), m_list[1],"-VS-".rjust(max_width+3),m_list[3].rjust(5))
-        print(players[3].name+"\n")
-        print(players[4].name, players[4].name.rjust(max_width*2+2))
+        print("-VS-".ljust(max_width),m_list[1])
+        print(players[3].name)
+        print("-VS-".rjust(max_width+6)+m_list[3].rjust(max_width)+"\n")
+        print(players[4].name,players[4].name.rjust(max_width))
         print("\n##########\n")
     if(list_input == 6):
         print("\n##########\n")
         print(players[0].name)
-        print("-VS-".ljust(max_width), m_list[0])
+        print("-VS-".ljust(max_width),m_list[0])
         print(players[1].name+"\n")
         print("-VS-".rjust(max_width+6)+m_list[3].rjust(max_width+1)+"\n")
         print(players[2].name)
-        print("-VS-".ljust(max_width), m_list[1])
+        print("-VS-".ljust(max_width),m_list[1])
         print(players[3].name)
         print("-VS-".rjust(max_width*2+6)+m_list[4].rjust(max_width+1)+"\n")
         print("\n\n"+players[4].name)
-        print("-VS-".ljust(max_width*2), m_list[2])
+        print("-VS-".ljust(max_width*2),m_list[2])
         print(players[5].name)
         print("\n##########\n")
     if(list_input == 7):
         print("\n##########\n")
         print(players[0].name)
-        print("-VS-".ljust(max_width), m_list[0])
+        print("-VS-".ljust(max_width),m_list[0])
         print(players[1].name+"\n")
         print("-VS-".rjust(max_width+6)+m_list[3].rjust(max_width+1)+"\n")
         print(players[2].name)
-        print("-VS-".ljust(max_width), m_list[1])
+        print("-VS-".ljust(max_width),m_list[1])
         print(players[3].name)
         print("-VS-".rjust(max_width*2+6)+m_list[5].rjust(max_width+1)+"\n")
         print(players[4].name)
-        print("-VS-".ljust(max_width), m_list[2])
+        print("-VS-".ljust(max_width),m_list[2])
         print(players[5].name)
         print("-VS-".rjust(max_width+6)+m_list[4].rjust(max_width+1)+"\n")
-        print(players[6].name, players[6].name.rjust(max_width))
+        print(players[6].name,players[6].name.rjust(max_width))
         print("\n##########\n")
     if(list_input == 8):
         print("\n##########\n")
         print(players[0].name)
-        print("-VS-".ljust(max_width), m_list[0])
+        print("-VS-".ljust(max_width),m_list[0])
         print(players[1].name+"\n")
         print("-VS-".rjust(max_width+6)+m_list[4].rjust(max_width+1)+"\n")
         print(players[2].name)
-        print("-VS-".ljust(max_width), m_list[1])
+        print("-VS-".ljust(max_width),m_list[1])
         print(players[3].name+"\n")
         print("-VS-".rjust(max_width*2+6)+m_list[6].rjust(max_width+1)+"\n")
         print(players[4].name)
-        print("-VS-".ljust(max_width), m_list[2])
+        print("-VS-".ljust(max_width),m_list[2])
         print(players[5].name+"\n")
         print("-VS-".rjust(max_width+6)+m_list[5].rjust(max_width+1)+"\n")
         print(players[6].name)
-        print("-VS-".ljust(max_width), m_list[3])
+        print("-VS-".ljust(max_width),m_list[3])
         print(players[7].name)
         print("\n##########\n")
 
@@ -191,7 +197,6 @@ def update_list(list_input):
         list_input[x][0][2] = players[list_input[x][0][0]].games_played
         list_input[x][1][2] = players[list_input[x][1][0]].games_played
     return list_input
-
 
 def sort_played(list_input):
     sorted_list = sorted(list_input, key=lambda x: (x[0][2], x[1][2]))
@@ -233,8 +238,7 @@ def input_name(x, name_list):
         if name in name_list:
             print("Someone already picked", name, "as their name")
             valid_name = False
-        if name.isspace():
-            valid_name = False
+        valid_name = not name.isspace()
     name_list.append(name)
     return name
 
@@ -297,7 +301,7 @@ def select_cpu_level():
 
 def select_game_type():
     selected_mode = 0
-    while selected_mode > 5 or selected_mode < 1:
+    while selected_mode > 6 or selected_mode < 1:
         try:
             selected_mode = int(input("Input mode:"))
             if selected_mode > 5 or selected_mode < 1:
@@ -313,7 +317,7 @@ def input_players():
     while no_of_players > 8 or no_of_players < 3:
         try:
             no_of_players = int(input("How many players (between 3 and 8)? "))
-            if no_of_players > 8 or no_of_players < 3:
+            if no_of_players > 5 or no_of_players < 1:
                 print("Input a number between 3 and 8")
         except ValueError:
             print("Please type in a number")
@@ -336,20 +340,22 @@ def start_menu():
     if mode == 1:
         print("Player vs player")
         new_player_class(2, mode)
-        game_manager = GameManager(TerminalRenderer(), players)
-        winner = game_manager.start_game()
+        simulate_game(players)
+        print("1.", players[0].name)
+        print("2.", players[1].name)
 
     if mode == 2:
         print("Player vs CPU")
         new_player_class(2, mode)
-        game_manager = GameManager(TerminalRenderer(), players)
-        winner = game_manager.start_game()
+        simulate_game(players)
+        print("1.", players[0].name)
+        print("2.", players[1].name)
 
     if mode == 3:
         print("CPU vs CPU")
         new_player_class(2, mode)
-        game_manager = GameManager(TerminalRenderer(), players)
-        winner = game_manager.start_game()
+        print("1.", players[0].name)
+        print("2,", players[1].name)
 
     if mode == 4:
         print("Round robin tournament selected")
@@ -363,6 +369,25 @@ def start_menu():
         new_player_class(no_of_players, mode)
         winner = elim_tourney(no_of_players)
         print(winner[0][1], "won the tournament!")
+    if mode == 6:
+        # Just a test mode
+        new_player = Player(0, "Test1", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(1, "TestingALongName", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(2, "test3", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(3, "test4", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(4, "test5", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(5, "test6", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(6, "test7", 0, False, 0, 0)
+        players.append(new_player)
+        new_player = Player(7, "test8", 0, False, 0, 0)
+        players.append(new_player)
+        elim_tourney(8)
 
 
 players = []

@@ -16,6 +16,7 @@ class GameManager:
         self.renderer = renderer
         self.players = []
         self.tournament_players = tournament_players
+        self.winner = None
 
         # Convert
         stone_type = "black"
@@ -33,10 +34,14 @@ class GameManager:
         self.phase = 1
         self.step_count = 0
 
+        self.phase = 1
+        self.step_count = 0
+
     def start_game(self):
         winner = self.game_step()
         self.renderer.render_winner(winner)
         if winner is not None:
+            self.winner = winner.tournament_player
             return winner.tournament_player
         else:
             return None
@@ -60,6 +65,12 @@ class GameManager:
             self.renderer.print_player_turn(current_player)
 
             move = current_player.controller.make_move(self.board, self.phase)
+            if(move == 0):
+                if(self.step_count % 2 == 0):
+                    current_player = self.players[(self.step_count % len(self.players))+1]
+                else:
+                    current_player = self.players[(self.step_count % len(self.players))-1]
+                return current_player
             n_mills = detect_mill(self.board, move)
             if n_mills > 0:
                 self.renderer.begin_render()

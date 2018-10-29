@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from GamePlatform.Controller import Controller
 from GamePlatform.Move import Move
-
+import sys
 
 class StdinController(Controller):
     # during a players turn, display the currentPosition state of the board,
@@ -15,15 +15,15 @@ class StdinController(Controller):
         if phase == 2:
             move = self.get_input_phase2(board)
 
-        if move is not None:
-            self.perform_move(board, move)
+        if(move != 0):
+            if move is not None:
+                self.perform_move(board, move)
 
         return move
 
     def get_input_slot(self, board, prompt):
         is_valid_input = False
         current_position_slot = None
-
         while not is_valid_input:
 
             # Where we are right now
@@ -31,6 +31,10 @@ class StdinController(Controller):
                 prompt +
                 ":\033[93m Input is on the form <xy> (e.g. '41' for middle top) \u001b[0m"
             )
+            if(current_position == "q" or current_position == "Q"):
+                sys.exit("Exit game...")
+            if(current_position == "f" or current_position == "F"):
+                return 0
 
             has_two_letters = len(current_position) == 2
             if not has_two_letters:
@@ -60,6 +64,8 @@ class StdinController(Controller):
         while not is_valid_input:
             selected_slot = self.get_input_slot(
                 board, "You got a mill! Select a stone to remove")
+            if(selected_slot == 0):
+                return selected_slot
             slot_owner = selected_slot.owner
 
             slots_outside_mills = board.get_player_slots_outside_mills(
@@ -83,6 +89,8 @@ class StdinController(Controller):
         while not is_valid_input:
             selected_slot = self.get_input_slot(
                 board, "Select a slot where you want to put your stone")
+            if(selected_slot == 0):
+                return selected_slot
             if selected_slot.owner is not None:
                 print("\033[31mSlot is already occupied, try again\u001b[0m")
             else:
@@ -100,6 +108,8 @@ class StdinController(Controller):
 
             current_position_slot = self.get_input_slot(
                 board, "Pick a stone to move")
+            if(current_position_slot == 0):
+                return current_position_slot
             is_owner = current_position_slot.owner == self.player
             neighbouring_slots = current_position_slot.get_neighbours()
             can_move = any(slot.owner is None for slot in neighbouring_slots)
@@ -117,6 +127,8 @@ class StdinController(Controller):
             if can_fly:
                 chosen_slot = self.get_input_slot(
                     board, "Your stones can now fly: where do you want to go?")
+                if(chosen_slot == 0):
+                    return selected_slot
                 if chosen_slot.owner is None:
                     new_position_slot = chosen_slot
                     break
